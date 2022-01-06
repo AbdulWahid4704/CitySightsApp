@@ -10,8 +10,10 @@ import CoreLocation
 
 class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
     
-    
     var locationManager = CLLocationManager()
+    
+    @Published var restaurants = [Business]()
+    @Published var sights = [Business]()
     
     override init () {
         super.init()
@@ -50,8 +52,8 @@ class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
             locationManager.stopUpdatingLocation()
             
             // TODO: if we have the coordinates of the user send to yelp
-            // getBusinesses(category: "arts", location: userLocation)
-            getBusinesses(category: "restaurants", location: userLocation)
+            getBusinesses(category: Constants.sightsKey, location: userLocation)
+            getBusinesses(category: Constants.restaurantKey, location: userLocation)
         }
         
     }
@@ -60,7 +62,7 @@ class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
     func getBusinesses(category: String, location: CLLocation) {
         
         // Create the component
-        var urlComponent = URLComponents(string: "https://api.yelp.com/v3/businesses/search")
+        var urlComponent = URLComponents(string: Constants.urlKey)
         
         urlComponent?.queryItems = [
             URLQueryItem(name: "latitude", value: String(location.coordinate.latitude)),
@@ -77,12 +79,38 @@ class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
             
             var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10.0)
             request.httpMethod = "GET"
-            request.addValue("Bearer X8j5Hs31Aq7wI29vw81YwCJuguJAY8DU8cundNTYyCqrFsicTYwgwUtUehc89kGeL2sphRllhWuwjaevfopdTqik8lO8iuopbmIlpejbaNCbs4VZOYih0DaimbnWYXYx", forHTTPHeaderField: "Authorization")
+            request.addValue("Bearer \(Constants.apiKey)", forHTTPHeaderField: "Authorization")
             
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 
-                if error == nil {
-                    print(response)
+                guard let data = data else {
+                    return
+                }
+                
+                do {
+                    
+                    let result = try JSONDecoder().decode(BusinessSearch.self, from: data)
+                    
+                    DispatchQueue.main.async {
+                        
+                        // check and assing to property
+                        switch category {
+                            
+                        case Constants.sightsKey:
+                            self.sights = result.businesses
+                        case Constants.restaurantKey:
+                            self.restaurants = result.businesses
+                        default:
+                            break
+                            
+                        }
+                        
+                    }
+                    
+                }
+                catch {
+                    print("Couldnt decode")
+                    print(error)
                 }
                 
             }
