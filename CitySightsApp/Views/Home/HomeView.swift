@@ -49,19 +49,49 @@ struct HomeView: View {
                 }
                 else {
                     
-                    // Show map
-                    BusinessMap(selectedBusiness: $selectedBusiness)
-                        .ignoresSafeArea()
-                        .sheet(item: $selectedBusiness) { business in
+                    ZStack(alignment: .top) {
+                        
+                        // Show map
+                        BusinessMap(selectedBusiness: $selectedBusiness)
+                            .ignoresSafeArea()
+                            .sheet(item: $selectedBusiness) { business in
+                                
+                                // Create a detail view with the selected business
+                                BusinessDetail(business: business)
+                                
+                            }
+                        
+                        // Rectangle overlay
+                        ZStack {
                             
-                            // Create a detail view with the selected business
-                            BusinessDetail(business: business)
+                            Rectangle()
+                                .foregroundColor(.white)
+                                .cornerRadius(5)
+                                .shadow(radius: 5)
+                                .frame(height: 48)
+                            
+                            HStack {
+                                
+                                Image(systemName: "location")
+                                Text("San Francisco")
+                                Spacer()
+                                Button("Switch to List View") {
+                                    
+                                    self.hasSelectedMapView = false
+                                    
+                                }
+                                
+                            }
+                            .padding()
                             
                         }
+                        .padding()
+                    }
+                    .navigationBarHidden(true)
+                    
                 }
                 
             }
-            
         }
         else {
             ProgressView()
@@ -70,6 +100,7 @@ struct HomeView: View {
         
     }
 }
+
 
 //struct HomeView_Previews: PreviewProvider {
 //    static var previews: some View {
