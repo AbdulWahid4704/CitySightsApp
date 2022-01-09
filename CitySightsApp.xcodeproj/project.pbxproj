@@ -156,6 +156,7 @@
 				EAD5113C278760EA008DEBE0 /* HomeView.swift */,
 				EA48047E27886306002732DB /* Map */,
 				EAD511412787661B008DEBE0 /* List */,
+				EA48047F27886317002732DB /* BusinessDetail.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -167,7 +168,6 @@
 				EA30625B27876AC200AEF03A /* BusinessSectin.swift */,
 				EA7EB7CF278769430079FC4D /* BusinessSectionHeader.swift */,
 				EA48047C278822C1002732DB /* BusinessRow.swift */,
-				EA48047F27886317002732DB /* BusinessDetail.swift */,
 			);
 			path = List;
 			sourceTree = "<group>";
