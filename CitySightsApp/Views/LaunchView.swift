@@ -18,6 +18,7 @@ struct LaunchView: View {
         if model.authorizationState == .notDetermined{
             
             // if not determined, Show onboarding
+            OnboardingView()
         }
         else if model.authorizationState == .authorizedAlways || model.authorizationState == .authorizedWhenInUse {
             
@@ -27,6 +28,7 @@ struct LaunchView: View {
         else {
            
             // if denied show denied view
+            DeniedView()
             
         }
         
